@@ -47,6 +47,6 @@ func handleRate(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	keyboards.EditMessage(ctx, b, chatID, messageID,
 		constants.RateInfo,
-		keyboards.SendRateKeyboard(),
+		keyboards.SendBackToHomeKeyboard(),
 	)
 }
