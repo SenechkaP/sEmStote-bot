@@ -36,3 +36,17 @@ func handleOrder(ctx context.Context, b *bot.Bot, update *models.Update) {
 		keyboards.SendOrderKeyboard(),
 	)
 }
+
+func handleRate(ctx context.Context, b *bot.Bot, update *models.Update) {
+	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
+		CallbackQueryID: update.CallbackQuery.ID,
+	})
+
+	chatID := update.CallbackQuery.Message.Message.Chat.ID
+	messageID := update.CallbackQuery.Message.Message.ID
+
+	keyboards.EditMessage(ctx, b, chatID, messageID,
+		constants.RateInfo,
+		keyboards.SendRateKeyboard(),
+	)
+}
