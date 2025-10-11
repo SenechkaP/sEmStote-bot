@@ -2,12 +2,14 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/SenechkaP/semstore-bot/internal/calculator"
 	"github.com/SenechkaP/semstore-bot/internal/constants"
 	"github.com/SenechkaP/semstore-bot/internal/keyboards"
 	"github.com/SenechkaP/semstore-bot/internal/logger"
+	"github.com/SenechkaP/semstore-bot/internal/rate"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 )
@@ -48,8 +50,11 @@ func handleRate(ctx context.Context, b *bot.Bot, update *models.Update) {
 	chatID := update.CallbackQuery.Message.Message.Chat.ID
 	messageID := update.CallbackQuery.Message.Message.ID
 
+	rateCNY, _ := rate.GetRate("CNY")
+	text := fmt.Sprintf("Курс на сегодня: %.2f₽ за 1¥", rateCNY)
+
 	keyboards.EditMessage(ctx, b, chatID, messageID,
-		constants.RateInfo,
+		text,
 		keyboards.SendBackToHomeKeyboard(),
 	)
 }
