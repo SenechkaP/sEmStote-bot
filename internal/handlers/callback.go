@@ -245,8 +245,9 @@ func handlePriceInput(ctx context.Context, b *bot.Bot, update *models.Update) {
 	_, resultText := calculator.Compute(item, price)
 
 	_, err = b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: chatID,
-		Text:   resultText,
+		ChatID:    chatID,
+		Text:      resultText,
+		ParseMode: models.ParseModeHTML,
 		// ReplyMarkup: keyboards.SendBackToHomeKeyboard(),
 	})
 	if err != nil {

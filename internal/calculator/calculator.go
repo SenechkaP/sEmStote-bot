@@ -82,7 +82,7 @@ func ClearPending(chatID int64) {
 func Compute(item Item, price int) (float64, string) {
 	rateCNY, _ := rate.GetRate("CNY")
 	total := rateCNY*float64(price) + float64(item.Сommission)
-	text := fmt.Sprintf("Вы выбрали: %s\nВведённая цена: %d\nИтоговая цена: %.0f", item.Name, price, math.Ceil(total))
+	text := fmt.Sprintf("Вы выбрали: <b>%s</b>\n\nСтоимость вашего товара: <b>%d ¥</b>\n\nИтоговая стоимость без учёта доставки до России: <b>%.0f ₽</b> ✅\n\n❗️<i>При заказе, к стоимости будет добавлена цена за доставку по России до вашего ПВЗ Boxberry</i>", item.Name, price, math.Ceil(total))
 	return total, text
 }
 
