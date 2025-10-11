@@ -3,10 +3,12 @@ package calculator
 import (
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"sync"
 
 	"github.com/SenechkaP/semstore-bot/configs"
+	"github.com/SenechkaP/semstore-bot/internal/rate"
 )
 
 var items map[string]Item
@@ -77,9 +79,10 @@ func ClearPending(chatID int64) {
 	delete(sessions, chatID)
 }
 
-func Compute(item Item, price int) (int, string) {
-	total := price + item.Сommission
-	text := fmt.Sprintf("Вы выбрали: %s\nВведённая цена: %d\nИтоговая цена: %d", item.Name, price, total)
+func Compute(item Item, price int) (float64, string) {
+	rateCNY, _ := rate.GetRate("CNY")
+	total := rateCNY*float64(price) + float64(item.Сommission)
+	text := fmt.Sprintf("Вы выбрали: %s\nВведённая цена: %d\nИтоговая цена: %.0f", item.Name, price, math.Ceil(total))
 	return total, text
 }
 
