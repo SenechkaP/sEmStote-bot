@@ -1,16 +1,17 @@
-package handlers
+package commands
 
 import (
 	"context"
 
 	"github.com/SenechkaP/semstore-bot/internal/constants"
+	"github.com/SenechkaP/semstore-bot/internal/handlers/state"
 	"github.com/SenechkaP/semstore-bot/internal/keyboards"
 	"github.com/SenechkaP/semstore-bot/internal/logger"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 )
 
-func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+func StartHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	if update == nil || update.Message == nil {
 		return
 	}
@@ -20,12 +21,12 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	logger.Log.Infof("User: %s %s (ID: %d)", user.FirstName, user.LastName, user.ID)
 
-	if prevMsgID, ok := GetLastMenuMessage(chatID); ok && prevMsgID != 0 {
+	if prevMsgID, ok := state.GetLastMenuMessage(chatID); ok && prevMsgID != 0 {
 		_, _ = b.DeleteMessage(ctx, &bot.DeleteMessageParams{
 			ChatID:    chatID,
 			MessageID: prevMsgID,
 		})
-		ClearLastMenuMessage(chatID)
+		state.ClearLastMenuMessage(chatID)
 	}
 
 	msg, err := b.SendMessage(ctx, &bot.SendMessageParams{
@@ -43,6 +44,6 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		sentID = msg.ID
 	}
 	if sentID != 0 {
-		SetLastMenuMessage(chatID, sentID)
+		state.SetLastMenuMessage(chatID, sentID)
 	}
 }

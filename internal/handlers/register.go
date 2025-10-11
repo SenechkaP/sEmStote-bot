@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"github.com/SenechkaP/semstore-bot/internal/calculator"
+	"github.com/SenechkaP/semstore-bot/internal/handlers/callbacks"
+	"github.com/SenechkaP/semstore-bot/internal/handlers/commands"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 )
@@ -16,18 +18,18 @@ var priceMatchFunc bot.MatchFunc = func(update *models.Update) bool {
 }
 
 func RegisterMessageHandlers(b *bot.Bot) {
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, startHandler)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "back_to_main", bot.MatchTypeExact, handleBackToMain)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "order", bot.MatchTypeExact, handleOrder)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "rate", bot.MatchTypeExact, handleRate)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "way_to_link", bot.MatchTypeExact, handleWayToLink)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "back_from_photo", bot.MatchTypeExact, handleBackFromPhoto)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "calculate", bot.MatchTypeExact, handleItemType)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "back_to_item_type", bot.MatchTypeExact, handleItemType)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "shoes", bot.MatchTypeExact, handleShoesType)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "clothes", bot.MatchTypeExact, handleClothesType)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "accessories", bot.MatchTypeExact, handlerAccessoriesType)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "other_item", bot.MatchTypeExact, handlerOtherItemType)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "item:", bot.MatchTypePrefix, handleItemSelected)
-	b.RegisterHandlerMatchFunc(priceMatchFunc, handlePriceInput)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, commands.StartHandler)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "back_to_main", bot.MatchTypeExact, callbacks.HandleBackToMain)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "order", bot.MatchTypeExact, callbacks.HandleOrder)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "rate", bot.MatchTypeExact, callbacks.HandleRate)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "way_to_link", bot.MatchTypeExact, callbacks.HandleWayToLink)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "back_from_photo", bot.MatchTypeExact, callbacks.HandleBackFromPhoto)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "calculate", bot.MatchTypeExact, callbacks.HandleItemType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "back_to_item_type", bot.MatchTypeExact, callbacks.HandleItemType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "shoes", bot.MatchTypeExact, callbacks.HandleShoesType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "clothes", bot.MatchTypeExact, callbacks.HandleClothesType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "accessories", bot.MatchTypeExact, callbacks.HandlerAccessoriesType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "other_item", bot.MatchTypeExact, callbacks.HandlerOtherItemType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "item:", bot.MatchTypePrefix, callbacks.HandleItemSelected)
+	b.RegisterHandlerMatchFunc(priceMatchFunc, callbacks.HandlePriceInput)
 }
