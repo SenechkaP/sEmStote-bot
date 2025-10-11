@@ -86,13 +86,21 @@ func handleBackFromPhoto(ctx context.Context, b *bot.Bot, update *models.Update)
 		logger.Log.Errorf("failed to delete image message: %v", err)
 	}
 
-	_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+	msg, err := b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID:      chatID,
 		Text:        constants.StepsToMakeOrder,
 		ReplyMarkup: keyboards.SendOrderKeyboard(),
 	})
 	if err != nil {
 		logger.Log.Errorf("failed to send order menu: %v", err)
+	}
+
+	var sentID int
+	if msg != nil {
+		sentID = msg.ID
+	}
+	if sentID != 0 {
+		SetLastMenuMessage(chatID, sentID)
 	}
 }
 
