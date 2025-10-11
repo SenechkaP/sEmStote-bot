@@ -5,39 +5,45 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+
+	"github.com/SenechkaP/semstore-bot/configs"
 )
+
+var items map[string]Item
+
+func SetConfig(cfg *configs.СommissionConfig) {
+	items = map[string]Item{
+		"sneakers":       {Name: "Кроссовки", Сommission: cfg.СommissionForSneakers},
+		"other_sneakers": {Name: "Кеды", Сommission: cfg.СommissionForSneakers},
+		"boots":          {Name: "Ботинки", Сommission: cfg.СommissionForSneakers},
+		"heels":          {Name: "Туфли", Сommission: cfg.СommissionForSneakers},
+		"slippers":       {Name: "Тапки", Сommission: cfg.СommissionForSneakers},
+		"sandals":        {Name: "Сандали", Сommission: cfg.СommissionForSneakers},
+
+		"shirts":  {Name: "Футболка/Рубашка", Сommission: cfg.CommissionForShirts},
+		"hoodies": {Name: "Толстовка/Худи", Сommission: cfg.CommissionForShirts},
+		"coats":   {Name: "Пуховик/Пальто", Сommission: cfg.CommissionForShirts},
+		"jackets": {Name: "Жилетка/Куртка", Сommission: cfg.CommissionForShirts},
+		"pants":   {Name: "Штаны", Сommission: cfg.CommissionForShirts},
+		"shorts":  {Name: "Шорты", Сommission: cfg.CommissionForShirts},
+		"hats":    {Name: "Шапка/Кепка", Сommission: cfg.CommissionForShirts},
+		"socks":   {Name: "Носки", Сommission: cfg.CommissionForShirts},
+
+		"glasses":   {Name: "Очки", Сommission: cfg.CommissionForShirts},
+		"watches":   {Name: "Часы", Сommission: cfg.CommissionForShirts},
+		"jewelry":   {Name: "Украшение", Сommission: cfg.CommissionForShirts},
+		"belts":     {Name: "Ремень", Сommission: cfg.CommissionForShirts},
+		"gloves":    {Name: "Перчатки", Сommission: cfg.CommissionForShirts},
+		"headdress": {Name: "Головной убор", Сommission: cfg.CommissionForShirts},
+
+		"bags":     {Name: "Рюкзак/Сумка", Сommission: cfg.CommissionForShirts},
+		"continue": {Name: "Другое", Сommission: 0},
+	}
+}
 
 type Item struct {
 	Name       string
 	Сommission int
-}
-
-var items = map[string]Item{
-	"sneakers":       {Name: "Кроссовки", Сommission: 200},
-	"other_sneakers": {Name: "Кеды", Сommission: 150},
-	"boots":          {Name: "Ботинки", Сommission: 250},
-	"heels":          {Name: "Туфли", Сommission: 300},
-	"slippers":       {Name: "Тапки", Сommission: 300},
-	"sandals":        {Name: "Сандали", Сommission: 300},
-
-	"shirts":  {Name: "Футболка/Рубашка", Сommission: 100},
-	"hoodies": {Name: "Толстовка/Худи", Сommission: 150},
-	"coats":   {Name: "Пуховик/Пальто", Сommission: 400},
-	"jackets": {Name: "Жилетка/Куртка", Сommission: 400},
-	"pants":   {Name: "Штаны", Сommission: 400},
-	"shorts":  {Name: "Шорты", Сommission: 400},
-	"hats":    {Name: "Шапка/Кепка", Сommission: 400},
-	"socks":   {Name: "Носки", Сommission: 400},
-
-	"glasses":   {Name: "Очки", Сommission: 300},
-	"watches":   {Name: "Часы", Сommission: 500},
-	"jewelry":   {Name: "Украшение", Сommission: 300},
-	"belts":     {Name: "Ремень", Сommission: 500},
-	"gloves":    {Name: "Перчатки", Сommission: 300},
-	"headdress": {Name: "Головной убор", Сommission: 500},
-
-	"bags":     {Name: "Рюкзак/Сумка", Сommission: 250},
-	"continue": {Name: "Другое", Сommission: 0},
 }
 
 var (
