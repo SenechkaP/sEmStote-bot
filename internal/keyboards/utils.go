@@ -16,6 +16,7 @@ func EditMessage(ctx context.Context, b *bot.Bot, chatID int64, messageID int, n
 		MessageID:   messageID,
 		Text:        newText,
 		ReplyMarkup: keyboard,
+		ParseMode:   models.ParseModeHTML,
 	})
 }
 
