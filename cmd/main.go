@@ -9,11 +9,13 @@ import (
 	"github.com/SenechkaP/semstore-bot/internal/bot"
 	"github.com/SenechkaP/semstore-bot/internal/calculator"
 	"github.com/SenechkaP/semstore-bot/internal/logger"
+	"github.com/SenechkaP/semstore-bot/internal/rate"
 )
 
 func main() {
 	config := configs.LoadConfig(".env")
 	calculator.SetConfig(&config.CommissionConfig)
+	rate.SetConfig(&config.DefaultRatesConfig)
 
 	tgBot, err := bot.New(config.TelegramBotToken)
 	if err != nil {
