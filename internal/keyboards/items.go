@@ -13,7 +13,7 @@ func SendItemTypeKeyboard() *models.InlineKeyboardMarkup {
 			},
 			{
 				{Text: "🕶 Аксессуар", CallbackData: "accessories"},
-				{Text: "👜 Рюкзак/Сумка", CallbackData: "item:bags"},
+				{Text: "👜 Рюкзак/Сумка", CallbackData: "item:itemType:bags"},
 			},
 			{
 				{Text: "Другое", CallbackData: "other_item"},
@@ -29,16 +29,16 @@ func SendShoesTypeKeyboard() *models.InlineKeyboardMarkup {
 	return &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: "👟 Кроссовки", CallbackData: "item:sneakers"},
-				{Text: "👟 Кеды", CallbackData: "item:other_sneakers"},
+				{Text: "👟 Кроссовки", CallbackData: "item:shoesType:sneakers"},
+				{Text: "👟 Кеды", CallbackData: "item:shoesType:other_sneakers"},
 			},
 			{
-				{Text: "🥾 Ботинки", CallbackData: "item:boots"},
-				{Text: "👠 Туфли", CallbackData: "item:heels"},
+				{Text: "🥾 Ботинки", CallbackData: "item:shoesType:boots"},
+				{Text: "👠 Туфли", CallbackData: "item:shoesType:heels"},
 			},
 			{
-				{Text: "🩴 Тапки", CallbackData: "item:slippers"},
-				{Text: "👡 Сандали", CallbackData: "item:sandals"},
+				{Text: "🩴 Тапки", CallbackData: "item:shoesType:slippers"},
+				{Text: "👡 Сандали", CallbackData: "item:shoesType:sandals"},
 			},
 			{
 				{Text: "🔙 Вернуться назад", CallbackData: "back_to_item_type"},
@@ -51,20 +51,20 @@ func SendClothesTypeKeyboard() *models.InlineKeyboardMarkup {
 	return &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: "👕 Футболка/Рубашка", CallbackData: "item:shirts"},
-				{Text: "👘 Толстовка/Худи", CallbackData: "item:hoodies"},
+				{Text: "👕 Футболка/Рубашка", CallbackData: "item:clothesType:shirts"},
+				{Text: "👘 Толстовка/Худи", CallbackData: "item:clothesType:hoodies"},
 			},
 			{
-				{Text: "🧥 Пуховик/Пальто", CallbackData: "item:coats"},
-				{Text: "🦺 Жилетка/Куртка", CallbackData: "item:jackets"},
+				{Text: "🧥 Пуховик/Пальто", CallbackData: "item:clothesType:coats"},
+				{Text: "🦺 Жилетка/Куртка", CallbackData: "item:clothesType:jackets"},
 			},
 			{
-				{Text: "👖 Штаны", CallbackData: "item:pants"},
-				{Text: "🩳 Шорты", CallbackData: "item:shorts"},
+				{Text: "👖 Штаны", CallbackData: "item:clothesType:pants"},
+				{Text: "🩳 Шорты", CallbackData: "item:clothesType:shorts"},
 			},
 			{
-				{Text: "🧢 Шапка/Кепка", CallbackData: "item:hats"},
-				{Text: "🧦 Носки", CallbackData: "item:socks"},
+				{Text: "🧢 Шапка/Кепка", CallbackData: "item:clothesType:hats"},
+				{Text: "🧦 Носки", CallbackData: "item:clothesType:socks"},
 			},
 			{
 				{Text: "🔙 Вернуться назад", CallbackData: "back_to_item_type"},
@@ -77,16 +77,16 @@ func SendAccessoriesTypeKeyboard() *models.InlineKeyboardMarkup {
 	return &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: "👓 Очки", CallbackData: "item:glasses"},
-				{Text: "⌚️ Часы", CallbackData: "item:watches"},
+				{Text: "👓 Очки", CallbackData: "item:accessoriesType:glasses"},
+				{Text: "⌚️ Часы", CallbackData: "item:accessoriesType:watches"},
 			},
 			{
-				{Text: "💍 Украшение", CallbackData: "item:jewelry"},
-				{Text: "👖 Ремень", CallbackData: "item:belts"},
+				{Text: "💍 Украшение", CallbackData: "item:accessoriesType:jewelry"},
+				{Text: "👖 Ремень", CallbackData: "item:accessoriesType:belts"},
 			},
 			{
-				{Text: "🧤 Перчатки", CallbackData: "item:gloves"},
-				{Text: "🧢 Головной убор", CallbackData: "item:headdress"},
+				{Text: "🧤 Перчатки", CallbackData: "item:accessoriesType:gloves"},
+				{Text: "🧢 Головной убор", CallbackData: "item:accessoriesType:headdress"},
 			},
 			{
 				{Text: "🔙 Вернуться назад", CallbackData: "back_to_item_type"},
@@ -99,7 +99,7 @@ func SendOtherTypeKeyboard() *models.InlineKeyboardMarkup {
 	return &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: "Продолжить", CallbackData: "item:continue"},
+				{Text: "Продолжить", CallbackData: "item:otherType:continue"},
 			},
 			{
 				{Text: "🔙 Вернуться назад", CallbackData: "back_to_item_type"},
