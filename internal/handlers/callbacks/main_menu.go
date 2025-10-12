@@ -52,7 +52,7 @@ func HandleRate(ctx context.Context, b *bot.Bot, update *models.Update) {
 	text := fmt.Sprintf(constants.RateOutput, rateCNY)
 
 	if err != nil {
-		logger.Log.Errorf("failed to fentch CNY exchange rate: %v\n", err)
+		logger.Log.Errorf("failed to fentch CNY exchange rate: %v", err)
 		text = constants.RateErrorOutput
 	}
 
