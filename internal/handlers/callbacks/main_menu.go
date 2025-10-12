@@ -6,6 +6,7 @@ import (
 
 	"github.com/SenechkaP/semstore-bot/internal/constants"
 	"github.com/SenechkaP/semstore-bot/internal/keyboards"
+	"github.com/SenechkaP/semstore-bot/internal/logger"
 	"github.com/SenechkaP/semstore-bot/internal/rate"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
@@ -47,8 +48,13 @@ func HandleRate(ctx context.Context, b *bot.Bot, update *models.Update) {
 	chatID := update.CallbackQuery.Message.Message.Chat.ID
 	messageID := update.CallbackQuery.Message.Message.ID
 
-	rateCNY, _ := rate.GetRate("CNY")
-	text := fmt.Sprintf("Курс на сегодня: %.2f₽ за 1¥", rateCNY)
+	rateCNY, err := rate.GetRate("CNY")
+	text := fmt.Sprintf(constants.RateOutput, rateCNY)
+
+	if err != nil {
+		logger.Log.Errorf("failed to fentch CNY exchange rate: %v\n", err)
+		text = constants.RateErrorOutput
+	}
 
 	keyboards.EditMessage(ctx, b, chatID, messageID,
 		text,
