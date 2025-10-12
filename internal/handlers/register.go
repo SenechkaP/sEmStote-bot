@@ -28,8 +28,9 @@ func RegisterMessageHandlers(b *bot.Bot) {
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "back_to_item_type", bot.MatchTypeExact, callbacks.HandleItemType)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "shoes", bot.MatchTypeExact, callbacks.HandleShoesType)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "clothes", bot.MatchTypeExact, callbacks.HandleClothesType)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "accessories", bot.MatchTypeExact, callbacks.HandlerAccessoriesType)
-	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "other_item", bot.MatchTypeExact, callbacks.HandlerOtherItemType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "accessories", bot.MatchTypeExact, callbacks.HandleAccessoriesType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "other_item", bot.MatchTypeExact, callbacks.HandleOtherItemType)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "back_to_category:", bot.MatchTypePrefix, callbacks.HandleBackToCategoty)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "item:", bot.MatchTypePrefix, callbacks.HandleItemSelected)
 	b.RegisterHandlerMatchFunc(priceMatchFunc, callbacks.HandlePriceInput)
 }
