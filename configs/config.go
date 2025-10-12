@@ -16,8 +16,8 @@ type Config struct {
 }
 
 type СommissionConfig struct {
-	СommissionForSneakers int
-	CommissionForShirts   int
+	CommissionForShoes int
+	CommissionForOther int
 }
 
 type DefaultRatesConfig struct {
@@ -32,8 +32,8 @@ func LoadConfig(envPath string) *Config {
 		}
 	}
 
-	sneakersCom, err1 := strconv.Atoi(os.Getenv("COMMISSION_FOR_SNEAKERS"))
-	shirtsCom, err2 := strconv.Atoi(os.Getenv("COMMISSION_FOR_SHIRTS"))
+	shoesCom, err1 := strconv.Atoi(os.Getenv("COMMISSION_FOR_SHOES"))
+	otherCom, err2 := strconv.Atoi(os.Getenv("COMMISSION_FOR_OTHER"))
 	defaultRateForCNY, err3 := strconv.ParseFloat(os.Getenv("CNY_DEFAULT_RATE"), 64)
 	defaultRateForEUR, err4 := strconv.ParseFloat(os.Getenv("EUR_DEFAULT_RATE"), 64)
 
@@ -44,8 +44,8 @@ func LoadConfig(envPath string) *Config {
 	cfg := &Config{
 		TelegramBotToken: os.Getenv("TELEGRAM_BOT_TOKEN"),
 		CommissionConfig: СommissionConfig{
-			СommissionForSneakers: sneakersCom,
-			CommissionForShirts:   shirtsCom,
+			CommissionForShoes: shoesCom,
+			CommissionForOther: otherCom,
 		},
 		DefaultRatesConfig: DefaultRatesConfig{
 			DefaultRateForCNY: defaultRateForCNY,
