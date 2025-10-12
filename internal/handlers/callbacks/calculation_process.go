@@ -21,11 +21,12 @@ func HandleItemSelected(ctx context.Context, b *bot.Bot, update *models.Update) 
 	if data == "" {
 		return
 	}
-	parts := strings.SplitN(data, ":", 2)
-	if len(parts) != 2 {
+	parts := strings.SplitN(data, ":", 3)
+	if len(parts) != 3 {
 		return
 	}
-	itemID := parts[1]
+	itemCategory := parts[1]
+	itemID := parts[2]
 
 	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
 		CallbackQueryID: update.CallbackQuery.ID,
@@ -45,10 +46,7 @@ func HandleItemSelected(ctx context.Context, b *bot.Bot, update *models.Update) 
 
 	keyboards.EditMessage(ctx, b, chatID, messageID,
 		constants.EnterPrice,
-		&models.InlineKeyboardMarkup{
-			InlineKeyboard: [][]models.InlineKeyboardButton{},
-		},
-		// keyboards.SendBackToHomeKeyboard(),
+		keyboards.SendBackToCategoryKeyboard(itemCategory),
 	)
 }
 
@@ -82,7 +80,6 @@ func HandlePriceInput(ctx context.Context, b *bot.Bot, update *models.Update) {
 		ChatID:    chatID,
 		Text:      resultText,
 		ParseMode: models.ParseModeHTML,
-		// ReplyMarkup: keyboards.SendBackToHomeKeyboard(),
 	})
 	if err != nil {
 		logger.Log.Errorf("failed to send calc result: %v", err)
