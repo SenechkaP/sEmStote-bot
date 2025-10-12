@@ -5,7 +5,18 @@ import (
 	"io"
 	"math"
 	"net/http"
+
+	"github.com/SenechkaP/semstore-bot/configs"
 )
+
+var defaultRates map[string]float64
+
+func SetConfig(cfg *configs.DefaultRatesConfig) {
+	defaultRates = map[string]float64{
+		"CNY": cfg.DefaultRateForCNY,
+		"EUR": cfg.DefaultRateForEUR,
+	}
+}
 
 type ExchangeRates struct {
 	Rates map[string]float64 `json:"rates"`
@@ -14,7 +25,7 @@ type ExchangeRates struct {
 func GetRate(currency string) (float64, error) {
 	allRates, err := getExchangeRate()
 	if err != nil {
-		return -1, err
+		return defaultRates[currency], err
 	}
 
 	rate := math.Round(1/allRates.Rates[currency]*100) / 100
