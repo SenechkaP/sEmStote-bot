@@ -13,7 +13,6 @@ import (
 
 func main() {
 	config := configs.LoadConfig(".env")
-	logger.Log.Info(config)
 	calculator.SetConfig(&config.CommissionConfig)
 
 	tgBot, err := bot.New(config.TelegramBotToken)
