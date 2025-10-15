@@ -14,7 +14,7 @@ import (
 
 func main() {
 	config := configs.LoadConfig(".env")
-	calculator.SetConfig(&config.CommissionConfig)
+	calculator.SetConfig(&config.CommissionConfig, &config.ShippingCostConfig)
 	rate.SetConfig(&config.DefaultRatesConfig)
 
 	tgBot, err := bot.New(config.TelegramBotToken)
