@@ -13,8 +13,9 @@ var defaultRates map[string]float64
 
 func SetConfig(cfg *configs.DefaultRatesConfig) {
 	defaultRates = map[string]float64{
-		"CNY": cfg.DefaultRateForCNY,
-		"EUR": cfg.DefaultRateForEUR,
+		"CNY":     cfg.DefaultRateCNY_RUB,
+		"EUR":     cfg.DefaultRateEUR_RUB,
+		"RUB_EUR": cfg.DefaultRateRUB_EUR,
 	}
 }
 
@@ -22,6 +23,7 @@ type ExchangeRates struct {
 	Rates map[string]float64 `json:"rates"`
 }
 
+// Returns amount of RUB for 1 unit of currency
 func GetRate(currency string) (float64, error) {
 	allRates, err := getExchangeRate()
 	if err != nil {
@@ -35,6 +37,14 @@ func GetRate(currency string) (float64, error) {
 	}
 
 	return rate, nil
+}
+
+func GetRubEur() (float64, error) {
+	allRates, err := getExchangeRate()
+	if err != nil {
+		return defaultRates["RUB_EUR"], err
+	}
+	return allRates.Rates["EUR"], nil
 }
 
 func getExchangeRate() (*ExchangeRates, error) {
