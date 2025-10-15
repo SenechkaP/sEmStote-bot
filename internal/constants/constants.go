@@ -1,8 +1,8 @@
 package constants
 
 const (
-	LoadEnvErrorOutput      = "could not load env file %s: %v"
-	EnvVariablesErrorOutput = "something wrong with .env file. It should include following variables:\n  TELEGRAM_BOT_TOKEN\n  COMMISSION_FOR_SNEAKERS\n  COMMISSION_FOR_SHIRTS\n  CNY_DEFAULT_RATE\n  EUR_DEFAULT_RATE"
+	LoadEnvErrorOutput      = "Could not load env file %s: %v"
+	EnvVariablesErrorOutput = "Something wrong with .env file. At least one variable is missing:\n  %s"
 	Greeting                = "Доброго времени суток! Чем я могу Вам помочь?"
 	AdminAccount            = "https://t.me/s3mmm_7"
 	StepsToMakeOrder        = "Для заказа отправьте @s3mmm_7 в лс:\n\n1️⃣Ссылку на товар\n2️⃣Укажите размер товара\n3️⃣При необходимости цвет товара"
@@ -13,8 +13,9 @@ const (
 	ChooseClothesType       = "Выберите тип одежды"
 	ChooseAccessoriesType   = "Выберите тип аксессуара"
 	OtherItemTypeText       = "❗️В этой категории вы можете посчитать стоимость товара БЕЗ учета доставки до России"
+	OverTwoHundredEurText   = "<i>Стоимость товара превысила беспошлинный лимит в 200 €. Таможенная пошлина составляет 15%% от суммы, превышающей 200 €\n\nТаможенная пошлина на ваш товар (Уже включена в итоговую стоимость): %.0f₽</i>\n\n"
 	EnterPrice              = "Напишите стоимость товара в юанях\n\n❗️<i>Минимальная стоимость товара для заказа 20¥</i>"
-	PriceOutput             = "Вы выбрали: <b>%s</b>\n\nСтоимость вашего товара: <b>%s ¥</b>\n\nИтоговая стоимость без учёта доставки до России: <b>%s ₽</b> ✅\n\n❗️<i>При заказе, к стоимости будет добавлена цена за доставку по России до вашего ПВЗ Boxberry</i>"
+	PriceOutput             = "Вы выбрали: <b>%s</b>\n\nСтоимость вашего товара: <b>%s ¥</b>\n\nИтоговая стоимость c учётом доставки до России: <b>%s ₽</b> ✅\n\n%s❗️<i>При заказе, к стоимости будет добавлена цена за доставку по России до вашего ПВЗ Boxberry</i>"
 	RateOutput              = "Курс на сегодня: %.2f₽ за 1¥"
 	RateErrorOutput         = "Не удалось получить информацию о текущем курсе юаня к рублю. Обратитесь к @s3mmm_7 для уточнения курса на сегодня."
 )
