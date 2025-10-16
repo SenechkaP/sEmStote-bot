@@ -11,9 +11,15 @@ import (
 
 type Config struct {
 	TelegramBotToken   string
+	RedisConfig        RedisConfig
 	CommissionConfig   СommissionConfig
 	DefaultRatesConfig DefaultRatesConfig
 	ShippingCostConfig ShippingCostConfig
+}
+
+type RedisConfig struct {
+	RedisAddr     string
+	RedisPassword string
 }
 
 type СommissionConfig struct {
@@ -22,8 +28,7 @@ type СommissionConfig struct {
 }
 
 type DefaultRatesConfig struct {
-	DefaultRateCNY_RUB float64
-	DefaultRateEUR_RUB float64
+	DefaultRateRUB_CNY float64
 	DefaultRateRUB_EUR float64
 }
 
@@ -61,9 +66,11 @@ func LoadConfig(envPath string) *Config {
 	shoesCom := getEnvInt("COMMISSION_FOR_SHOES")
 	otherCom := getEnvInt("COMMISSION_FOR_OTHER")
 
-	defaultRateCNY_RUB := getEnvFloat("CNY_RUB_DEFAULT_RATE")
-	defaultRateEUR_RUB := getEnvFloat("EUR_RUB_DEFAULT_RATE")
+	defaultRateRUB_CNY := getEnvFloat("RUB_CNY_DEFAULT_RATE")
 	defaultRateRUB_EUR := getEnvFloat("RUB_EUR_DEFAULT_RATE")
+
+	redisAddr := os.Getenv("REDIS_URL")
+	redisPassword := os.Getenv("REDIS_PASSWORD")
 
 	var shippingCostConfig ShippingCostConfig
 
@@ -91,13 +98,16 @@ func LoadConfig(envPath string) *Config {
 
 	cfg := &Config{
 		TelegramBotToken: os.Getenv("TELEGRAM_BOT_TOKEN"),
+		RedisConfig: RedisConfig{
+			RedisAddr:     redisAddr,
+			RedisPassword: redisPassword,
+		},
 		CommissionConfig: СommissionConfig{
 			CommissionForShoes: shoesCom,
 			CommissionForOther: otherCom,
 		},
 		DefaultRatesConfig: DefaultRatesConfig{
-			DefaultRateCNY_RUB: defaultRateCNY_RUB,
-			DefaultRateEUR_RUB: defaultRateEUR_RUB,
+			DefaultRateRUB_CNY: defaultRateRUB_CNY,
 			DefaultRateRUB_EUR: defaultRateRUB_EUR,
 		},
 		ShippingCostConfig: shippingCostConfig,
