@@ -98,7 +98,7 @@ func Compute(item Item, price int) (float64, string) {
 
 	if priceInEUR > 200 {
 		additionalTax = (priceInEUR-200)*0.15*rateEUR_RUB + 500
-		additionalText = fmt.Sprintf(constants.OverTwoHundredEurText, additionalTax)
+		additionalText = fmt.Sprintf(constants.OverTwoHundredEurText, format.FormatNumberWithDots(int(math.Ceil(additionalTax))))
 	}
 
 	total := priceInRUB + float64(item.Сommission) + float64(item.ShippingCost) + additionalTax
