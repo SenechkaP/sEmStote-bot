@@ -16,6 +16,5 @@ RUN apk add --no-cache ca-certificates
 WORKDIR /app
 COPY --from=builder /app/bot .
 COPY --from=builder /app/internal/src/images ./internal/src/images
-COPY --from=builder /app/.env .
 
 CMD ["./bot"]
