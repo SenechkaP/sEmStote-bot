@@ -10,12 +10,27 @@ import (
 	"github.com/SenechkaP/semstore-bot/internal/calculator"
 	"github.com/SenechkaP/semstore-bot/internal/logger"
 	"github.com/SenechkaP/semstore-bot/internal/rate"
+	"github.com/SenechkaP/semstore-bot/internal/redis"
+	"github.com/SenechkaP/semstore-bot/internal/services"
 )
 
 func main() {
 	config := configs.LoadConfig(".env")
+
 	calculator.SetConfig(&config.CommissionConfig, &config.ShippingCostConfig)
-	rate.SetConfig(&config.DefaultRatesConfig)
+
+	redisClient := redis.New(config.RedisConfig.RedisAddr, config.RedisConfig.RedisPassword)
+	exchangeCache := redis.NewExchangeCache(redisClient)
+	exchangeService := services.NewExchangeService(exchangeCache, &config.DefaultRatesConfig)
+
+	rate.SetService(exchangeService)
+
+	if err := exchangeService.UpdateRates(); err != nil {
+		logger.Log.Warnf("Failed to update rates at startup: %v", err)
+	}
+
+	exchangeService.StartAutoRefresh()
+	defer exchangeService.StopAutoRefresh()
 
 	tgBot, err := bot.New(config.TelegramBotToken)
 	if err != nil {
