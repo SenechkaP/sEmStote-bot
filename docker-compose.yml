@@ -1,6 +1,6 @@
 services:
   telegram-bot:
-    build: .
+    image: ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest
     container_name: semstore-bot
     restart: unless-stopped
     env_file:

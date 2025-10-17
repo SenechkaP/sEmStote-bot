@@ -29,4 +29,5 @@ jobs:
           script: |
             cd /semstore/sEmStote-bot-v2/
             docker pull ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest
+            docker-compose down
             docker-compose up -d
