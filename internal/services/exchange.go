@@ -43,7 +43,7 @@ func (s *ExchangeService) GetRate(currency string) (float64, error) {
 	}
 
 	now := time.Now().Unix()
-	if ratesData == nil || now > ratesData.Timestamp+5 {
+	if !isDayOff(ratesData.Timestamp) && (ratesData == nil || now > ratesData.Timestamp+5) {
 		logger.Log.Infof("Rates missing or expired. Updating now...")
 		if err := s.updateRates(); err != nil {
 			logger.Log.Warnf("Failed to update rates, fallback: %v", err)
@@ -79,8 +79,12 @@ func (s *ExchangeService) StartAutoRefresh() {
 			if ratesData == nil {
 				sleepDuration = 1 * time.Second
 			} else {
-				nextUpdate := time.Unix(ratesData.Timestamp+5, 0)
-				sleepDuration = max(time.Until(nextUpdate), 0)
+				if isDayOff(ratesData.Timestamp) {
+					sleepDuration = time.Hour * 12
+				} else {
+					nextUpdate := time.Unix(ratesData.Timestamp+5, 0)
+					sleepDuration = max(time.Until(nextUpdate), 0)
+				}
 			}
 
 			select {
@@ -135,4 +139,12 @@ func (s *ExchangeService) getRatesFromAPI() (*cbrResponse, error) {
 	}
 
 	return &raw, nil
+}
+
+func isDayOff(timestamp int64) bool {
+	weekday := time.Unix(timestamp, 0).Weekday()
+	if weekday == time.Friday || weekday == time.Saturday || weekday == time.Sunday {
+		return true
+	}
+	return false
 }
