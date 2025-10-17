@@ -6,7 +6,6 @@ import (
 
 	"github.com/SenechkaP/semstore-bot/internal/constants"
 	"github.com/SenechkaP/semstore-bot/internal/logger"
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -56,13 +55,7 @@ type ShippingCostConfig struct {
 	BagShippingCost           int
 }
 
-func LoadConfig(envPath string) *Config {
-	if envPath != "" {
-		if err := godotenv.Load(envPath); err != nil {
-			logger.Log.Fatalf(constants.LoadEnvErrorOutput, envPath, err)
-		}
-	}
-
+func LoadConfig() *Config {
 	shoesCom := getEnvInt("COMMISSION_FOR_SHOES")
 	otherCom := getEnvInt("COMMISSION_FOR_OTHER")
 

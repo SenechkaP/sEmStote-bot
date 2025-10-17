@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	config := configs.LoadConfig(".env")
+	config := configs.LoadConfig()
 
 	calculator.SetConfig(&config.CommissionConfig, &config.ShippingCostConfig)
 
