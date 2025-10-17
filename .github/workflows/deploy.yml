@@ -29,6 +29,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /semstore/semstore-bot-v2/
+            cd /semstore/sEmStote-bot-v2
             docker-compose pull telegram-bot
             docker-compose up -d --force-recreate
