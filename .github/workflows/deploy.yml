@@ -10,10 +10,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Build Docker image
+      - name: Build Docker image (no cache)
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest .
+          docker build --no-cache -t ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest .
 
       - name: Push Docker image
         run: |
@@ -27,7 +29,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /semstore/sEmStote-bot-v2/
-            docker pull ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest
-            docker-compose down
-            docker-compose up -d
+            cd /semstore/semstore-bot-v2/
+            docker-compose pull telegram-bot
+            docker-compose up -d --force-recreate
