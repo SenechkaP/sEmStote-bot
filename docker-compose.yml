@@ -1,7 +1,6 @@
 services:
   telegram-bot:
-    image: ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest
-    container_name: semstore-bot
+    image: senechka300/semstore-bot:${BOT_TAG}
     restart: unless-stopped
     env_file:
       - .env

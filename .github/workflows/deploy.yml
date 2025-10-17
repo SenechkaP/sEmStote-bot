@@ -13,14 +13,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build Docker image (no cache)
+      - name: Build Docker image
         run: |
-          docker build --no-cache -t ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest .
+          IMAGE_TAG=sha-${GITHUB_SHA}
+          echo "Building Docker image with tag $IMAGE_TAG"
+          docker build --no-cache -t senechka300/semstore-bot:$IMAGE_TAG -t senechka300/semstore-bot:latest .
 
       - name: Push Docker image
         run: |
           echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USER }}" --password-stdin
-          docker push ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest
+          IMAGE_TAG=sha-${GITHUB_SHA}
+          docker push senechka300/semstore-bot:$IMAGE_TAG
+          docker push senechka300/semstore-bot:latest
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.0
@@ -29,7 +33,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /semstore/sEmStote-bot-v2
-            docker-compose down -v --remove-orphans
-            docker-compose pull
-            docker-compose up -d --force-recreate
+            cd /semstore/sEmStote-bot-v2/
+            docker image prune -af --filter "label=keep=false" || true
+            docker images | grep senechka300/semstore-bot | awk 'NR>2 {print $3}' | xargs -r docker rmi -f || true
+            BOT_TAG=sha-${GITHUB_SHA} docker-compose up -d --build --force-recreate
