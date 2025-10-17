@@ -30,5 +30,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /semstore/sEmStote-bot-v2
-            docker-compose pull telegram-bot
+            docker-compose down -v --remove-orphans
+            docker-compose pull
             docker-compose up -d --force-recreate
