@@ -143,7 +143,7 @@ func (s *ExchangeService) getRatesFromAPI() (*cbrResponse, error) {
 
 func isDayOff(timestamp int64) bool {
 	weekday := time.Unix(timestamp, 0).Weekday()
-	if weekday == time.Friday || weekday == time.Saturday || weekday == time.Sunday {
+	if weekday == time.Saturday || weekday == time.Sunday {
 		return true
 	}
 	return false
