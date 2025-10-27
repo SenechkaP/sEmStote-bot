@@ -58,7 +58,7 @@ jobs:
           overwrite: true
           debug: true
 
-      - name: Move file into place and restart service on VPS
+      - name: Move file into place, export IMAGE_TAG and restart service on VPS
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -78,12 +78,11 @@ jobs:
 
             cd /semstore/sEmStote-bot-v2
 
-            IMAGE_TAG=${{ github.sha }}
+            export IMAGE_TAG=${{ github.sha }}
             IMAGE_FULL=${{ secrets.DOCKER_HUB_USER }}/semstore-bot:${IMAGE_TAG}
 
             docker pull "$IMAGE_FULL"
 
-            IMAGE_TAG=$IMAGE_TAG docker-compose pull telegram-bot || true
-            IMAGE_TAG=$IMAGE_TAG docker-compose up -d --no-deps --force-recreate telegram-bot
+            docker-compose up -d --no-deps --force-recreate telegram-bot
 
             docker image prune -f || true
