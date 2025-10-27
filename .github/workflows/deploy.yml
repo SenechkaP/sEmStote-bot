@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set IMAGE_TAG
+      - name: Set IMAGE_TAG (GIT SHA)
         id: set-tag
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_OUTPUT
 
@@ -44,28 +44,38 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (needed for docker-compose.prod.yml)
         uses: actions/checkout@v4
 
-      - name: Upload docker-compose.prod.yml to VPS (as docker-compose.yml)
+      - name: Upload docker-compose.prod.yml to VPS (upload to /tmp)
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          port: 22
           source: "docker-compose.prod.yml"
-          target: "/semstore/sEmStote-bot-v2/docker-compose.yml"
+          target: "/tmp/"
+          overwrite: true
+          debug: true
 
-      - name: Pull image and restart service on VPS
+      - name: Move file into place and restart service on VPS
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          port: 22
           script: |
             set -eux
+
+            if ! sudo -n true 2>/dev/null; then
+              echo "ERROR: user cannot run sudo without password. Aborting."
+              exit 1
+            fi
+
+            sudo mv /tmp/docker-compose.prod.yml /semstore/sEmStote-bot-v2/docker-compose.yml
+            sudo chown root:root /semstore/sEmStote-bot-v2/docker-compose.yml
+            sudo chmod 644 /semstore/sEmStote-bot-v2/docker-compose.yml
+
             cd /semstore/sEmStote-bot-v2
 
             IMAGE_TAG=${{ github.sha }}
