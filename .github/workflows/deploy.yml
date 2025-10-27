@@ -69,7 +69,7 @@ jobs:
 
             cd /semstore/sEmStote-bot-v2
 
-            sudo sed -i "s|image: .*|image: ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:${GITHUB_SHA}|g" docker-compose.yml
+            sudo sed -i "s|image:.*semstore-bot:.*|image: ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:${GITHUB_SHA}|g" docker-compose.yml
 
             docker-compose down || true
             docker-compose up -d
