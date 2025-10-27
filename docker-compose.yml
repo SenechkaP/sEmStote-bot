@@ -1,7 +1,7 @@
 services:
   telegram-bot:
-    image: senechka300/semstore-bot:${BOT_TAG}
-    restart: unless-stopped
+    build: .
+    container_name: semstore-bot
     env_file:
       - .env
     depends_on:
