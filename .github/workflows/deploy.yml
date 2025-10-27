@@ -44,6 +44,8 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Ensure remote dir exists on VPS
         uses: appleboy/ssh-action@v0.1.8
         with:
