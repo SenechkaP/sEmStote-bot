@@ -19,26 +19,16 @@ jobs:
         id: set-tag
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_OUTPUT
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Build and push Docker image (sha + latest)
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:${{ github.sha }}
-            ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:latest
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:${GITHUB_SHA} .
+          docker push ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:${GITHUB_SHA}
 
   deploy-to-vps:
     needs: build-and-push
@@ -47,7 +37,7 @@ jobs:
       - name: Checkout (needed for docker-compose.prod.yml)
         uses: actions/checkout@v4
 
-      - name: Upload docker-compose.prod.yml to VPS (upload to /tmp)
+      - name: Upload docker-compose.prod.yml to VPS
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -58,7 +48,7 @@ jobs:
           overwrite: true
           debug: true
 
-      - name: Move file into place, export IMAGE_TAG and restart service on VPS
+      - name: Move file into place and restart service on VPS
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -78,10 +68,10 @@ jobs:
 
             cd /semstore/sEmStote-bot-v2
 
-            export IMAGE_TAG=${{ github.sha }}
-            IMAGE_FULL=${{ secrets.DOCKER_HUB_USER }}/semstore-bot:${IMAGE_TAG}
+            sudo sed -i "s|image: .*|image: ${{ secrets.DOCKER_HUB_USER }}/semstore-bot:${GITHUB_SHA}|g" docker-compose.yml
 
-            docker pull "$IMAGE_FULL"
+            docker-compose down || true
+            docker-compose rm -f || true
 
             docker-compose up -d --no-deps --force-recreate telegram-bot
 
