@@ -37,34 +37,65 @@ func NewExchangeService(cache *redis.ExchangeCache, cfg *configs.DefaultRatesCon
 func (s *ExchangeService) GetRate(currency string) (float64, error) {
 	ratesData, err := s.cache.GetRates()
 	if err != nil {
-		logger.Log.Warnf("Failed to get rates from Redis: %v", err)
-		logger.Log.Warnf("Using default rate for %s: %.2f", currency, s.defaultRates[currency])
-		return s.defaultRates[currency], err
+		logger.Log.Warnf("Failed to read rates from redis: %v. Returning default for %s", err, currency)
+		if val, ok := s.defaultRates[currency]; ok {
+			return val, err
+		}
+		return 0, fmt.Errorf("failed to get rates and no default for %s: %w", currency, err)
 	}
 
-	now := time.Now().Unix()
-	if !isDayOff(ratesData.Timestamp) && (ratesData == nil || now > ratesData.Timestamp+5) {
-		logger.Log.Infof("Rates missing or expired. Updating now...")
+	if ratesData == nil {
+		logger.Log.Infof("No cached rates - attempting update")
 		if err := s.updateRates(); err != nil {
-			logger.Log.Warnf("Failed to update rates, fallback: %v", err)
+			logger.Log.Warnf("Update failed: %v", err)
+			if val, ok := s.defaultRates[currency]; ok {
+				return val, err
+			}
+			return 0, fmt.Errorf("no rates available for %s: %w", currency, err)
+		}
+		ratesData, _ = s.cache.GetRates()
+	}
+
+	if s.isExpired(ratesData) {
+		logger.Log.Infof("Cached rates expired (timestamp=%d). Attempting update...", ratesData.Timestamp)
+		if err := s.updateRates(); err != nil {
+			logger.Log.Warnf("Failed to update rates: %v. Falling back to stale/default", err)
 			if ratesData != nil {
-				if val, ok := ratesData.Rates[currency]; ok {
-					logger.Log.Warnf("Using stale cached rate for %s: %.2f", currency, val)
-					return val, nil
+				if v, ok := ratesData.Rates[currency]; ok {
+					logger.Log.Warnf("Using stale cached rate for %s: %.6f", currency, v)
+					return v, nil
 				}
 			}
-			if val, ok := s.defaultRates[currency]; ok {
-				return val, nil
+			if v, ok := s.defaultRates[currency]; ok {
+				return v, nil
 			}
 			return 0, fmt.Errorf("no rate available for %s", currency)
 		}
 		ratesData, _ = s.cache.GetRates()
 	}
 
-	if val, ok := ratesData.Rates[currency]; ok {
-		return val, nil
+	if ratesData != nil {
+		if v, ok := ratesData.Rates[currency]; ok {
+			logger.Log.Infof("Got %s rate from Redis", currency)
+			return v, nil
+		}
+	}
+
+	if v, ok := s.defaultRates[currency]; ok {
+		return v, fmt.Errorf("currency %s not found in rates; returning default", currency)
 	}
 	return 0, fmt.Errorf("currency %s not found", currency)
+}
+
+func (s *ExchangeService) isExpired(ratesData *redis.ExchangeRatesData) bool {
+	if ratesData == nil {
+		return true
+	}
+	if isDayOff(ratesData.Timestamp) {
+		return time.Since(ratesData.UpdatedAt) > 12*time.Hour
+	}
+	expiration := time.Unix(ratesData.Timestamp, 0).Add(15 * time.Hour)
+	return time.Now().After(expiration)
 }
 
 func (s *ExchangeService) UpdateRates() error {
@@ -75,15 +106,44 @@ func (s *ExchangeService) StartAutoRefresh() {
 	go func() {
 		for {
 			ratesData, _ := s.cache.GetRates()
-			var sleepDuration time.Duration
 			if ratesData == nil {
-				sleepDuration = 1 * time.Second
+				select {
+				case <-time.After(1 * time.Second):
+					_ = s.updateRates()
+				case <-s.stopCh:
+					return
+				}
+				continue
+			}
+
+			if s.isExpired(ratesData) {
+				_ = s.updateRates()
+				select {
+				case <-s.stopCh:
+					return
+				default:
+					continue
+				}
+			}
+
+			var next time.Time
+			if isDayOff(ratesData.Timestamp) {
+				next = ratesData.UpdatedAt.Add(12 * time.Hour)
 			} else {
-				if isDayOff(ratesData.Timestamp) {
-					sleepDuration = time.Hour * 12
-				} else {
-					nextUpdate := time.Unix(ratesData.Timestamp+5, 0)
-					sleepDuration = max(time.Until(nextUpdate), 0)
+				next = time.Unix(ratesData.Timestamp, 0).Add(15 * time.Hour)
+			}
+
+			sleepDuration := max(time.Until(next), 0)
+
+			logger.Log.Infof("Next exchange rates update scheduled at %s (unix=%d) — in %s", next.UTC().Format(time.RFC3339), next.Unix(), sleepDuration)
+
+			if sleepDuration == 0 {
+				_ = s.updateRates()
+				select {
+				case <-s.stopCh:
+					return
+				default:
+					continue
 				}
 			}
 
