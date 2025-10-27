@@ -1,16 +1,4 @@
 services:
-  telegram-bot:
-    image: "${DOCKER_HUB_USER:-senechka300}/semstore-bot:${IMAGE_TAG}"
-    container_name: semstore-bot
-    env_file:
-      - .env
-    environment:
-      - REDIS_URL=${REDIS_URL}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-    depends_on:
-      - redis
-    restart: unless-stopped
-
   redis:
     image: redis:7-alpine
     container_name: semstore-redis
@@ -22,6 +10,26 @@ services:
       - redis_data:/data
     env_file:
       - .env
+    networks:
+      - semstore-network
+
+  telegram-bot:
+    image: "${DOCKER_HUB_USER:-senechka300}/semstore-bot:${IMAGE_TAG}"
+    container_name: semstore-bot
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - semstore-network
 
 volumes:
   redis_data:
+
+networks:
+  semstore-network:
+    driver: bridge
