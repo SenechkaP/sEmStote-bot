@@ -42,7 +42,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	logger.Log.Info("Starting bot....")
+	logger.Log.Info("Starting bot...")
 	tgBot.Start(ctx)
 	logger.Log.Info("Bot stopped")
 }

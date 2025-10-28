@@ -108,7 +108,7 @@ func (s *ExchangeService) StartAutoRefresh() {
 			ratesData, _ := s.cache.GetRates()
 			if ratesData == nil {
 				select {
-				case <-time.After(1 * time.Second):
+				case <-time.After(1 * time.Minute):
 					_ = s.updateRates()
 				case <-s.stopCh:
 					return
@@ -133,19 +133,9 @@ func (s *ExchangeService) StartAutoRefresh() {
 				next = time.Unix(ratesData.Timestamp, 0).Add(15 * time.Hour)
 			}
 
-			sleepDuration := max(time.Until(next), 0)
+			sleepDuration := max(time.Until(next), time.Minute)
 
 			logger.Log.Infof("Next exchange rates update scheduled at %s (unix=%d) — in %s", next.UTC().Format(time.RFC3339), next.Unix(), sleepDuration)
-
-			if sleepDuration == 0 {
-				_ = s.updateRates()
-				select {
-				case <-s.stopCh:
-					return
-				default:
-					continue
-				}
-			}
 
 			select {
 			case <-time.After(sleepDuration):
